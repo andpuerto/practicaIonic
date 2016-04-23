@@ -1,0 +1,20 @@
+<ion-view view-title="Libros">
+  <ion-content>
+    <!-- Utilizamos el elemento ion-list para mostrar la lista de libros
+         La lista se carga de los elementos de listadoLibros. Al pulsar en uno
+         se pasa a la vista del detalle del libro con el id seleccionado-->
+    <ion-list>
+      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="libro in listaLibros" type="item-text-wrap" href="#/tab/chats/{{libro.id}}">
+        <img ng-src="{{libro.cover}}">
+        <h2>{{libro.title}}</h2>
+        <p>{{libro.price}}€</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+
+
+      </ion-item>
+    </ion-list>
+
+    <!-- El elemento infinite-scroll nos permite cargar mas elementos al hacer scroll hasta el final de la lista -->
+   <!-- <ion-infinite-scroll on-infinite="cargarMasLibros()" distance="1%"></ion-infinite-scroll>-->
+  </ion-content>
+</ion-view>

@@ -28,20 +28,13 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('LoginCtrl', ['$scope', '$http','$ionicPopup', '$state', function($scope, $http, $ionicPopup, $state) {
+.controller('LoginCtrl', ['$scope','$ionicPopup', '$state', 'Login', function($scope, $ionicPopup, $state, Login) {
   $scope.logindata = {};
 
   $scope.login = function() {
-    console.log("LOGIN user: " + $scope.logindata.username + " - PW: " + $scope.logindata.password);
-    var dataStr = "user="+$scope.logindata.username+"&"+"passwd="+$scope.logindata.password;
-    var config = {
-      headers : {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    };
 
 
-    $http.post('http://multimedia.uoc.edu/frontend/auth.php', dataStr, config)
+    Login.enter($scope.logindata.username, $scope.logindata.password)
       .success(function (data, status, headers, config) {
 
         //console.log("Status: " + status);
@@ -59,4 +52,67 @@ angular.module('starter.controllers', [])
         alert("error: " + status + ': ' +  data);
       });
   }
-}]);
+}])
+
+.controller('LibrosCtrl', function($scope, $ionicPopup, Libros) {
+  // With the new view caching in Ionic, Controllers are only called
+  // when they are recreated or on app start, instead of every page change.
+  // To listen for when this page is active (for example, to refresh data),
+  // listen for the $ionicView.enter event:
+  //
+  //$scope.$on('$ionicView.enter', function(e) {
+  //});
+
+  //Pagina cargada actualmente
+  $scope.paginaLibros=1;
+ // $scope.listaLibros=new Array();
+  //Mensajes de error
+  var errordatos='No se pudieron leer los datos';
+  var tituloerror='Error';
+  //Llamamos al servicio
+  //Si es correcto, establecemos el array en el scope
+  //Si no sacamos un alert con el error
+  Libros.getLista($scope.paginaLibros)
+    .success(function (data, status, headers, config) {
+      if(data.status!='KO'){
+        $scope.listaLibros=data;
+      }else{
+        $ionicPopup.alert({
+          title: tituloerror,
+          template: errordatos
+        });
+      }
+    })
+    .error(function (data, status, header, config) {
+      $ionicPopup.alert({
+        title: tituloerror,
+        template: errordatos
+      });
+    });
+
+ //Funcion para cargar mas libros
+  $scope.cargarMasLibros = function(){
+    console.log("cargarMasLibros");
+    Libros.getLista(++$scope.paginaLibros)
+      .success(function (data, status, headers, config) {
+        if(data.status!='KO'){
+          console.log("lista: " + $scope.listaLibros);
+          $scope.listaLibros.concat(data);
+          $scope.$broadcast('scroll.infiniteScrollComplete');
+        }else{
+          $ionicPopup.alert({
+            title: tituloerror,
+            template: errordatos
+          });
+        }
+      })
+      .error(function (data, status, header, config) {
+        $ionicPopup.alert({
+          title: tituloerror,
+          template: errordatos
+        });
+      });
+
+  }
+
+});

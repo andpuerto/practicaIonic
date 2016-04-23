@@ -47,4 +47,52 @@ angular.module('starter.services', [])
       return null;
     }
   };
-});
+})
+
+
+  .factory('Login', function($http) {
+    var config = {
+      headers : {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    };
+
+    var url='http://multimedia.uoc.edu/frontend/auth.php';
+
+    return {
+      enter: function(usuario, pass) {
+
+        var dataStr = "user="+usuario+"&"+"passwd="+pass;
+        console.log(dataStr);
+        return $http.post(url, dataStr, config);
+          //.success(function (data, status, headers, config) {
+          //  console.log(data.status);
+          //  return data.status;
+          //})
+          //.error(function (data, status, header, config) {
+          //  return 'KO';
+          //});
+      }
+    };
+  })
+
+
+  .factory('Libros', function($http) {
+    var config = {
+      headers : {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    };
+
+    var url='http://multimedia.uoc.edu/frontend/getbooks.php';
+
+    return {
+      getLista: function(pagina) {
+
+        var dataStr = "page="+pagina;
+        console.log(dataStr);
+        return $http.post(url, dataStr, config);
+
+      }
+    };
+  });
