@@ -49,34 +49,28 @@ angular.module('starter.services', [])
   };
 })
 
-
+//Servicio de login
   .factory('Login', function($http) {
+
+    //Configuracion y url para enviar los datos de login
     var config = {
       headers : {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     };
-
     var url='http://multimedia.uoc.edu/frontend/auth.php';
 
     return {
+      //La funcion enter se usa para enviar los datos de login al servidor
       enter: function(usuario, pass) {
-
+        //Devolvemos el resultado del post al servidor
         var dataStr = "user="+usuario+"&"+"passwd="+pass;
-        console.log(dataStr);
         return $http.post(url, dataStr, config);
-          //.success(function (data, status, headers, config) {
-          //  console.log(data.status);
-          //  return data.status;
-          //})
-          //.error(function (data, status, header, config) {
-          //  return 'KO';
-          //});
-      }
+        }
     };
   })
 
-
+//Servicio para la lista de libros
   .factory('Libros', function($http) {
     var config = {
       headers : {
@@ -87,12 +81,12 @@ angular.module('starter.services', [])
     var url='http://multimedia.uoc.edu/frontend/getbooks.php';
 
     return {
+      //La funcion getLista obtiene la parte de la lista de libros correspondiente
+      //al numero de pagina que recibe como parametro.
+      //Devuelve el resultado del post
       getLista: function(pagina) {
-
         var dataStr = "page="+pagina;
-        console.log(dataStr);
         return $http.post(url, dataStr, config);
-
       }
     };
   });

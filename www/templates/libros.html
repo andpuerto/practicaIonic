@@ -12,9 +12,15 @@
 
 
       </ion-item>
-    </ion-list>
 
-    <!-- El elemento infinite-scroll nos permite cargar mas elementos al hacer scroll hasta el final de la lista -->
-   <!-- <ion-infinite-scroll on-infinite="cargarMasLibros()" distance="1%"></ion-infinite-scroll>-->
+
+    </ion-list>
+    <!-- El elemento infinite-scroll nos permite cargar mas elementos al hacer scroll hasta el final de la lista.
+         Con on-infinite se especifica una funcion a la que llamar cuando se llega al final de la lista.
+         Con ng-if se especifica una condicion para dejar de hacer llamadas cuando se terminan los elementos
+         Con distance se indica a que distancia del final de la lista se llama. Con 1% se llama justo al llegar
+         al final y no antes.-->
+    <ion-infinite-scroll ng-if="!todosCargados" on-infinite="cargarMasLibros()" distance="1%"></ion-infinite-scroll>
+
   </ion-content>
 </ion-view>
