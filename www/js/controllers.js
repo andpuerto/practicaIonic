@@ -114,4 +114,72 @@ angular.module('starter.controllers', [])
 
   }
 
-}]);
+}])
+
+//Controlador para el detalle del libro
+  .controller('DetalleLibroCtrl', ['$stateParams', '$ionicPopup', '$ionicPopover', 'DetalleLibro', '$scope', function($stateParams,$ionicPopup, $ionicPopover, DetalleLibro, $scope) {
+    var self = this;
+
+    //Mensajes de error
+    var errordatos='No se pudieron obtener los datos del libro';
+    var tituloerror='Error';
+
+    //Creamos un objeto libro con todos los campos vacios, para evitar posibles problemas con valores nulos
+    self.libro = {id:"", title:"", price:"", cover:"", author:"", review:""};
+
+    //Utilizamos un popover para mostrar con mas detalle la parte de la review.
+    //Aqui lo inicializamos
+    $ionicPopover.fromTemplateUrl('review-popover.html', {
+      scope: $scope
+    }).then(function(popover) {
+      self.popover = popover;
+    });
+
+    //Tratamos de obtener los detalles del libro
+    DetalleLibro.getDetalles($stateParams.libroId)
+      .success(function (data, status, headers, config) {
+        //Si la recepcion de informacion ha sido correcta, tenemos que comprobar el estado
+        if(data.status!='KO'){
+          //Si no recibimos KO, lo que tenemos en data campos del detalle del libro
+          //Establecemos los datos como atributo libro
+          self.libro = data;
+        }else{
+          //Si recibimos KO, avisamos al usuario
+            $ionicPopup.alert({
+              title: tituloerror,
+              template: errordatos
+            });
+        }
+      })
+      //Si ha fallado la obtencion de datos, avisamos al usuario
+      .error(function (data, status, header, config) {
+        $ionicPopup.alert({
+          title: tituloerror,
+          template: errordatos
+        });
+      });
+
+
+    //Funcion para abrir el popover cuando se quiera ver la review completa
+    self.openPopover = function($event){
+      self.popover.show($event);
+    };
+
+    //Cierra el popover
+    self.closePopover = function() {
+      self.popover.hide();
+    };
+
+    //Elimina el popover cuando ya no se necesita
+    $scope.$on('$destroy', function() {
+      self.popover.remove();
+    });
+
+    self.agregarLibro = function(){
+      //Agregamos al array el id del libro y la cantidad
+      //Mostrar mensaje (¿toast?) avisando de la insercion correcta
+
+    };
+
+
+  }]);

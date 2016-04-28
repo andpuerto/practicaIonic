@@ -93,6 +93,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       url: '/login',
       templateUrl: 'templates/login.html',
       controller: 'LoginCtrl'
+    })
+
+    .state('tab.detalle-libro', {
+      url: '/libros/:libroId',
+      views: {
+        'tab-libros': {
+          templateUrl: 'templates/detalle-libro.html',
+          controller: 'DetalleLibroCtrl'
+        }
+      }
     });
 
   // if none of the above states are matched, use this as the fallback

@@ -89,4 +89,26 @@ angular.module('starter.services', [])
         return $http.post(url, dataStr, config);
       }
     };
+  })
+
+  //Servicio para detalles del libro
+  .factory('DetalleLibro', function($http) {
+    var config = {
+      headers : {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    };
+
+    var url='http://multimedia.uoc.edu/frontend/bookdetail.php';
+
+    return {
+      //La funcion getLista obtiene la parte de la lista de libros correspondiente
+      //al numero de pagina que recibe como parametro.
+      //Devuelve el resultado del post
+      getDetalles: function(idLibro) {
+        console.log("id"+idLibro);
+        var dataStr = "id="+idLibro;
+        return $http.post(url, dataStr, config);
+      }
+    };
   });
