@@ -120,6 +120,23 @@ angular.module('starter.controllers', [])
   .controller('DetalleLibroCtrl', ['$stateParams', '$ionicPopup', '$ionicPopover', 'DetalleLibro', '$scope', function($stateParams,$ionicPopup, $ionicPopover, DetalleLibro, $scope) {
     var self = this;
 
+    //Cantidad del libro para añadir al pedido en caso de que se pulse el boton
+    self.cantidad = 1;
+
+    //Para depuracion: eliminamos todos los datos de pedidos. Descomentar para vaciar la lista en las pruebas
+    //localStorage.clear();
+
+    //Para depuracion. Imprimimos todos los elementos almacenados en el localstorage
+    var ids = Object.keys(localStorage);
+    var i = 0;
+    for(i=0; i<ids.length; i++) {
+      //values.push( localStorage.getItem(keys[i]) );
+      var elemento = JSON.parse(localStorage.getItem(ids[i]));
+      console.log(elemento);
+      console.log("ID: " + ids[i] + ". Titulo: " + elemento.title + ". Cantidad: " + elemento.cantidad);
+    }
+
+
     //Mensajes de error
     var errordatos='No se pudieron obtener los datos del libro';
     var tituloerror='Error';
@@ -177,8 +194,21 @@ angular.module('starter.controllers', [])
 
     self.agregarLibro = function(){
       //Agregamos al array el id del libro y la cantidad
-      //Mostrar mensaje (¿toast?) avisando de la insercion correcta
+      //Tomamos del almacenamiento posibles datos anteriores para ese libro
+      var pedidoAnt = JSON.parse(localStorage.getItem(self.libro.id));
+      var nuevaCantidad = self.cantidad;
+      //Si hay datos anteriores para ese libro, la cantidad a introducir sera la suma de la anterior y la nueva
+      if(pedidoAnt != null){
+        nuevaCantidad = self.cantidad + parseInt(pedidoAnt.cantidad);
+      }
+      //Para depuracion
+      console.log("Voy a meter: ID: " +  self.libro.id + ". Titulo: " + self.libro.title + ". Cantidad: " + nuevaCantidad);
+      //Metemos en el almacenamiento el nuevo libro con la cantidad calculada en su caso
+      var pedidoTmp = {title:self.libro.title, cantidad:nuevaCantidad};
+      localStorage.setItem(self.libro.id, JSON.stringify(pedidoTmp));
 
+      //$scope.pedido.push(self.libro.title);
+      //Mostrar mensaje (¿toast?) avisando de la insercion correcta
     };
 
 
