@@ -33,6 +33,7 @@ angular.module('starter.controllers', [])
 
   self.logindata = {};
 
+
   //Funcion que se llamara cuando se realice el login
   self.login = function() {
     //Llamamos al servicio de login para que se envien los datos al servidor
@@ -204,12 +205,99 @@ angular.module('starter.controllers', [])
       //Para depuracion
       console.log("Voy a meter: ID: " +  self.libro.id + ". Titulo: " + self.libro.title + ". Cantidad: " + nuevaCantidad);
       //Metemos en el almacenamiento el nuevo libro con la cantidad calculada en su caso
-      var pedidoTmp = {title:self.libro.title, cantidad:nuevaCantidad};
+      var pedidoTmp = {title:self.libro.title, cantidad:nuevaCantidad, precioU:self.libro.price};
       localStorage.setItem(self.libro.id, JSON.stringify(pedidoTmp));
 
       //$scope.pedido.push(self.libro.title);
       //Mostrar mensaje (¿toast?) avisando de la insercion correcta
     };
+
+
+  }])
+
+
+  //Controlador para el pedido
+  .controller('PedidosCtrl', ['$ionicPopup', '$scope', 'Login', function($ionicPopup, $scope, Login) {
+    var self=this;
+
+    self.precioTotal = 0;
+
+    //Utilizamos el evento beforeEnter para recargar la lista de pedidos cada vez que se muestra la vista
+    //Puede ser que se haya actualizado en la vista del detalle de libro y, por tanto, debemos volver a cargarla
+    $scope.$on("$ionicView.beforeEnter", function(event, data){
+      self.recargarPedidos();
+    });
+
+
+    //Cargamos los elementos del pedido desde el almacenamiento.
+    self.recargarPedidos = function(){
+      self.pedidos = [];
+      //Tomamos todos los elementos del localStorage y los agregamos al array
+      var ids = Object.keys(localStorage);
+      for(var i=0; i<ids.length; i++) {
+        var elemento = JSON.parse(localStorage.getItem(ids[i]));
+        self.pedidos.push({id:ids[i], title:elemento.title, cantidad:elemento.cantidad, precioU:elemento.precioU});
+      }
+      //Calculamos el total
+      self.calcularTotal();
+    };
+
+
+    //Devuelve verdadero si hay algun elemento en la lista de pedidos
+    self.hayPedidos = function(){
+      return self.pedidos.length > 0;
+    };
+
+
+    //Almacena de nuevo el elemento que recibe como parametro
+    self.cambiarCantidad = function(elemento){
+      //Si la cantidad especificada es 0, eliminamos el elemento
+        if(elemento.cantidad <= 0) {
+          self.eliminarElemento(elemento);
+        }
+        //Si no, almacenamos de nuevo el elemento
+        else {
+          localStorage.setItem(elemento.id, JSON.stringify({
+            title: elemento.title,
+            cantidad: elemento.cantidad,
+            precioU: elemento.precioU
+          }));
+          //Recalculamos el precio total
+          self.calcularTotal();
+        }
+    };
+
+
+    //Calcula el importe total del pedido
+    self.calcularTotal = function(){
+      self.precioTotal = 0;
+      for(var i=0; i<self.pedidos.length; i++){
+        self.precioTotal += parseFloat(self.pedidos[i].precioU) * parseInt(self.pedidos[i].cantidad);
+      }
+    };
+
+
+    //Pide confirmacion para eliminar el elemento
+    //Si se confirma, se borra del almacenamiento y se recarga la lista
+    self.eliminarElemento = function(elemento){
+      $ionicPopup.confirm({
+        title: 'Eliminar elemento',
+        template: '¿Eliminar el elemento del pedido?'
+      })
+        .then(function(res) {
+        if(res) {
+          localStorage.removeItem(elemento.id);
+          //Recargamos la lista de pedidos tras la eliminacion
+          self.recargarPedidos();
+        }else{
+          //Si se cancela y se habia establecido la cantidad en 0, la dejamos en 1
+          if(elemento.cantidad <= 0) {
+            elemento.cantidad = 1;
+          }
+        }
+      });
+    };
+
 
 
   }]);

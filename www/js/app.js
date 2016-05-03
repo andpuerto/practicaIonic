@@ -95,6 +95,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       controller: 'LoginCtrl'
     })
 
+    .state('tab.pedidos', {
+      url: '/pedidos',
+      views: {
+        'tab-pedidos': {
+          templateUrl: 'templates/pedidos.html',
+          controller: 'PedidosCtrl'
+        }
+      }
+    })
+
     .state('tab.detalle-libro', {
       url: '/libros/:libroId',
       views: {
